@@ -53,7 +53,7 @@ Le fichier le + important
 
 ---
 
-### module_aco.py (logique ACO)
+### moduleAco.py (logique ACO)
 - Calcul des probabilités de choix
 - Mise à jour des phéromones
 - Construction des chemins
