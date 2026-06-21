@@ -108,7 +108,8 @@ def matriceDistanceEuclidienne(villes: dict, nombreVilles: int = 100) -> np.ndar
 if __name__ == "__main__":
     # python3 tools.py
 
-
+    # print('HelloWorld')
+    
     print ("----------TEST----------")
 
     # Décla des variables
