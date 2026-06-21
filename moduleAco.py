@@ -54,7 +54,7 @@ def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int
     meilleurChemin   = None
     meilleurDistance = np.inf
 
-    villes   = tools.creationDesVilles(nombreVilles)
+    villes    = tools.creationDesVilles(nombreVilles)
     distances = tools.matriceDistanceEuclidienne(villes, nombreVilles)
 
     # Matrice des phéromones : toutes les valeurs sont mises à 1. Elle sert à aider les fourmis dans le choix des chemins
