@@ -34,6 +34,9 @@ def ACO(NB_VILLES,NB_FOURMIS,NB_ITERATIONS):
                 positions_villes[i] = a  
     
     
+    # --------------------
+    # TEST 1 terminer
+    # --------------------
     
     distances = np.zeros((NB_VILLES, NB_VILLES))
     for i in range(NB_VILLES):
