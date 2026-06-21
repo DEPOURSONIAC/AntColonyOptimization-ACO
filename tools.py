@@ -71,7 +71,6 @@ def distanceEuclidienne (villeA: tuple, villeB: tuple)-> float:
 
     return  float((np.sqrt((deltaX**2 + deltaY**2))))
 
-
 def matriceDistanceEuclidienne(villes: dict, nombreVilles: int = 100) -> np.ndarray:
     """
     matriceDistanceEuclidienne():
