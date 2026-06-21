@@ -85,7 +85,7 @@ Le but est d'expliquer le projet et comment il est structurer
 - **NumPy** -> calculs rapides sur matrices
 - **Matplotlib** -> visualisation des chemins
 - **CSV** -> stockage des données de villes
-- (optionnel) interface graphique avec Tkinter( avoir si j'ai le temps)
+- (optionnel) interface graphique avec Tkinter( avoir si j'ai le temps) ou Pygame
 
 ---
 
