@@ -48,6 +48,9 @@ def ACO(NB_VILLES,NB_FOURMIS,NB_ITERATIONS):
             else:
                 distances[i][j] = float('inf') 
     
+     # --------------------
+    # TEST 2 terminer
+    # --------------------
     
     pheromones = np.ones((NB_VILLES, NB_VILLES))
     
