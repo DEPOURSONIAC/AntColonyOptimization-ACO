@@ -61,8 +61,9 @@ def ACO(NB_VILLES,NB_FOURMIS,NB_ITERATIONS):
     for iteration in range(NB_ITERATIONS):
         chemins_fourmis = []
         distances_fourmis = []
-        
-        
+        # -----
+        # A 
+        # -----
         for f in range(NB_FOURMIS):
             ville_depart = random.randint(0, NB_VILLES - 1)
             chemin = [ville_depart]
@@ -73,7 +74,9 @@ def ACO(NB_VILLES,NB_FOURMIS,NB_ITERATIONS):
                 probabilites = []
                 villes_accessibles = []
                 
-               
+                # -----
+                # B 
+                # -----
                 for prochaine_ville in range(NB_VILLES):
                     if prochaine_ville not in villes_visitees:
                         
@@ -81,8 +84,13 @@ def ACO(NB_VILLES,NB_FOURMIS,NB_ITERATIONS):
                         visibilite = (1.0 / distances[ville_actuelle][prochaine_ville]) ** BETA
                         score = attrait_pheromone * visibilite
                         
+                       
                         probabilites.append(score)
                         villes_accessibles.append(prochaine_ville)
+
+                        # -----
+                        # C
+                        # -----
                 
                 
                 somme_scores = sum(probabilites)
