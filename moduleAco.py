@@ -11,6 +11,7 @@ Il gère le meilleur chemin entre les villes:
     - l'évaporation  et le dépot des phéromones
 
 """
+# On récupère les modules/ blibli
 import random
 import numpy as np
 import tools
@@ -25,7 +26,7 @@ Q           : float = 100 # Ratio du nombre de phéromone sur une route/ chemin
 
 
 # fonctions
-def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int = 50):
+def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int = 50) -> tuple:
     """
     ACO (Ant Colony Optimization)
 
@@ -54,8 +55,8 @@ def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int
     meilleurChemin   = None
     meilleurDistance = np.inf
 
-    villes   = tools.creationDesVilles(nombreVilles)
-    distances = tools.matriceDistanceEuclidienne(villes, nombreVilles)
+    villes    = tools.creationDesVilles(nombreVilles)
+    distances = tools.matriceDistanceEuclidienne(villes)
 
     # Matrice des phéromones : toutes les valeurs sont mises à 1. Elle sert à aider les fourmis dans le choix des chemins
     MatricePheromones : np.ndarray = np.ones((nombreVilles, nombreVilles))
@@ -68,11 +69,12 @@ def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int
         # Liste des distances associées
         listeDistance           : list = list()
 
-        for fourmis in  range(nombreFourmis):
-            villeDepart = random.randint(0, nombreVilles-1)
+        for fourmis in range(nombreFourmis):
 
-            cheminFourmi: list = [villeDepart]
-            villesVisitees: set = {villeDepart}
+            villeDepart = random.randint(0, nombreVilles - 1)
+
+            cheminFourmi  : list = [villeDepart]
+            villesVisitees: set  = {villeDepart}
 
             while (len(cheminFourmi) < nombreVilles):
 
@@ -85,26 +87,171 @@ def ACO(nombreVilles: int = 100, nombreFourmis: int = 100, nombreIterations: int
 
                     if (prochaineVille not in villesVisitees):
                         pheromone = MatricePheromones[villeActuelle][prochaineVille] ** ALPHA
-                        visibilite = (1.0 / distances[villeActuelle][prochaineVille]) ** BETA
+                        visibilite = (1.0 / (distances[villeActuelle][prochaineVille] + 1e-9)) ** BETA
 
                         score = pheromone * visibilite
 
                         proba.append(score)
                         villesAccessibles.append(prochaineVille)
-                    pass
 
-            pass
+                if (len(villesAccessibles) == 0):
+                    # Un cas très rare mais par sécurité on vérifie s'il  y a des villes accessibles
+                    # Sinon on casse la boucle car on ne peut pas continuer le chemin
+                    break
 
-        
+                sommeScores = sum(proba)
 
-        print(' TEST ITERATION')
-   
+                if (sommeScores == 0):
+                    # Si la somme est nul alors chaque ville à la même proba d'être tirée soit 1/len(proba)
+                    proba = [1 / len(proba)] * len(proba)
+
+                else:
+                    # Sinon cela veut dire qu'on a récuper plusierus données (proba brut pour chaque ville )
+                    
+                    
+                    # On a des données brut donc le but est de les convertir en vrai proba par exemple :
+                    # proba[10,20,70]-> ingérable et trop brute donc convertion :
+                    # nouvelleProba[0.1,0.2,0.7]-> Traitable, soit p(e), la proba d'un évenement:
+                    # p(e) ∈ [0;1]
+
+                    proba = [p / sommeScores for p in proba]
+
+                # On utilsie choice car ça choisit une ville en fct des probas (pondéré)
+                choixVille = random.choices(villesAccessibles, weights=proba, k=1)[0]
+
+                cheminFourmi.append(choixVille)
+                villesVisitees.add(choixVille)
+
+            cheminFourmi.append(cheminFourmi[0])  # On rajoute la ville de base comme ça la boucle est bouclé
+
+            cheminTrouverParFourmis.append(cheminFourmi)
+
+            distanceTotale = 0
+
+            for i in range(len(cheminFourmi) - 1):
+                distanceTotale += distances[cheminFourmi[i]][cheminFourmi[i + 1]]
+
+            listeDistance.append(distanceTotale)
+
+            if distanceTotale < meilleurDistance:
+                meilleurDistance = distanceTotale
+                meilleurChemin = cheminFourmi.copy()
+
+        # Evaporation
+        MatricePheromones *= (1 - EVAPORATION)
+
+        # Depot
+
+        for fourmis in range(nombreFourmis):
+
+            cheminDeLaFourmis = cheminTrouverParFourmis[fourmis]
+            distancesDeLaFourmis = listeDistance[fourmis]
+
+            depot: float = Q / distancesDeLaFourmis
+
+            for i in range(len(cheminDeLaFourmis) - 1):
+                villeActuelle = cheminDeLaFourmis[i]
+                villeSuivante = cheminDeLaFourmis[i + 1]
+
+                MatricePheromones[villeActuelle][villeSuivante] += depot
+                MatricePheromones[villeSuivante][villeActuelle] += depot
+
     # Mesurer le temps que ça prends
     fin = time.perf_counter()
     deltaT = fin - debut
 
-    return (meilleurChemin, meilleurDistance, deltaT )
+    return (meilleurChemin, meilleurDistance, deltaT, villes, distances)
 
 
-if ( __name__ == "__main__"):
-    print('HelloWorld')
+if __name__ == "__main__":
+    # python3 .\moduleACO.py
+
+    # Décla des variables
+    nombreVilles     : int = 100
+    nombreFourmis    : int = 100
+    nombreIterations : int = 50
+
+    # ACO executer
+    chemin, dist, tps, villes, distances = ACO(nombreVilles, nombreFourmis, nombreIterations)
+
+    # Affiche les données 
+    print("Distance :", dist)
+    print("Temps :", tps)
+    print("Chemin :", chemin)
+
+    # Matrice des distances
+    print("\nMatrice des distances :")
+    print(distances)
+
+
+    # Villes du ACO
+    print("\nVilles du ACO :")
+    print(villes)
+
+"""
+# Décla des variables
+    nombreVilles     : int = 100
+    nombreFourmis    : int = 50
+    nombreIterations : int = 5
+
+
+\PROJET\AntColonyOptimization-ACO-main> python3 .\moduleACO.py
+Distance : 1920.8125863529972
+Temps : 2.645312399999966
+Chemin : [37, 51, 91, 62, 15, 39, 58, 89, 36, 97, 24, 7, 55, 67, 35, 31, 34, 60, 71, 85, 54, 73, 61, 13, 26, 83, 80, 52, 27, 9, 50, 32, 95, 30, 72, 20, 82, 33, 45, 12, 69, 3, 40, 96, 19, 76, 93, 21, 10, 59, 65, 8, 6, 66, 5, 86, 63, 49, 22, 99, 68, 42, 81, 84, 17, 94, 11, 79, 14, 98, 77, 70, 16, 23, 78, 64, 53, 88, 25, 44, 57, 92, 87, 29, 47, 46, 4, 28, 41, 2, 56, 1, 74, 90, 18, 48, 38, 75, 0, 43, 37]
+
+Matrice des distances :
+[[ 0.         56.56854249 32.24903099 ... 35.34119409 34.525353
+  53.15072906]
+ [56.56854249  0.         36.87817783 ... 26.2488095  87.13208364
+  96.46242792]
+ [32.24903099 36.87817783  0.         ... 11.         66.75327707
+  84.29116205]
+ ...
+ [35.34119409 26.2488095  11.         ...  0.         69.26037828
+  84.09518417]
+ [34.525353   87.13208364 66.75327707 ... 69.26037828  0.
+  24.75883681]
+ [53.15072906 96.46242792 84.29116205 ... 84.09518417 24.75883681
+   0.        ]]
+
+Villes du ACO :
+{0: (18, 58), 1: (58, 98), 2: (22, 90), 3: (50, 93), 4: (44, 55), 5: (64, 14), 6: (68, 15), 7: (10, 94), 8: (58, 33), 9: (6, 84), 10: (82, 26), 11: (42, 29), 12: (39, 98), 13: (26, 22), 14: (18, 24), 15: (44, 47), 16: (80, 52), 17: (26, 51), 18: (59, 71), 19: (35, 48), 20: (20, 83), 21: (81, 15), 22: (23, 0), 23: (77, 50), 24: (18, 99), 25: (72, 20), 26: (24, 21), 27: (3, 85), 28: (30, 57), 29: (81, 49), 30: (16, 79), 31: (70, 96), 32: (6, 77), 33: (31, 91), 34: (79, 99), 35: (64, 91), 36: (37, 88), 37: (75, 43), 38: (67, 87), 39: (43, 69), 40: (46, 61), 41: (51, 97), 42: (7, 12), 43: (38, 83), 44: (55, 32), 45: (30, 90), 46: (91, 55), 47: (98, 65), 48: (63, 74), 49: (32, 18), 50: (7, 86), 51: (74, 41), 52: (21, 6), 53: (96, 35), 54: (90, 89), 55: (15, 91), 56: (6, 100), 57: (76, 28), 58: (39, 67), 59: (79, 27), 60: (83, 95), 61: (93, 72), 62: (45, 42), 63: (58, 1), 64: (88, 14), 65: (60, 24), 66: (67, 15), 67: (92, 76), 68: (26, 5), 69: (49, 92), 70: (13, 51), 71: (86, 91), 72: (19, 79), 73: (84, 82), 74: (61, 69), 75: (4, 89), 76: (56, 20), 77: (6, 60), 78: (96, 6), 79: (25, 31), 80: (20, 12), 81: (4, 17), 82: (27, 82), 83: (11, 15), 84: (32, 8), 85: (88, 93), 86: (51, 4), 87: (69, 54), 88: (60, 57), 89: (43, 89), 90: (58, 67), 91: (24, 77), 92: (74, 32), 93: (53, 18), 94: (26, 52), 95: (9, 76), 96: (34, 51), 97: (33, 90), 98: (12, 24), 99: (29, 6)}
+
+
+
+# Amélioration des données:
+# Décla des variables
+    nombreVilles     : int = 100
+    nombreFourmis    : int = 100
+    nombreIterations : int = 50
+
+Distance : 935.1749969067251
+Temps : 57.4986786999998
+Chemin : [41, 1, 38, 35, 31, 34, 60, 85, 54, 71, 73, 67, 61, 47, 46, 53, 37, 51, 92, 57, 59, 10, 25, 6, 66, 5, 93, 76, 65, 8, 44, 62, 15, 4, 40, 39, 58, 43, 82, 91, 72, 20, 2, 24, 56, 27, 9, 50, 75, 7, 55, 30, 32, 95, 77, 70, 0, 17, 94, 28, 96, 19, 87, 23, 16, 29, 21, 64, 78, 63, 86, 22, 52, 68, 99, 84, 49, 13, 26, 14, 98, 81, 42, 83, 80, 79, 11, 90, 74, 18, 48, 88, 89, 36, 97, 33, 45, 69, 3, 12, 41]
+
+Matrice des distances :
+[[ 0.         56.56854249 32.24903099 ... 35.34119409 34.525353
+  53.15072906]
+ [56.56854249  0.         36.87817783 ... 26.2488095  87.13208364
+  96.46242792]
+ [32.24903099 36.87817783  0.         ... 11.         66.75327707
+  84.29116205]
+ ...
+ [35.34119409 26.2488095  11.         ...  0.         69.26037828
+  84.09518417]
+ [34.525353   87.13208364 66.75327707 ... 69.26037828  0.
+  24.75883681]
+ [53.15072906 96.46242792 84.29116205 ... 84.09518417 24.75883681
+   0.        ]]
+
+Villes du ACO :
+{0: (18, 58), 1: (58, 98), 2: (22, 90), 3: (50, 93), 4: (44, 55), 5: (64, 14), 6: (68, 15), 7: (10, 94), 8: (58, 33), 9: (6, 84), 10: (82, 26), 11: (42, 29), 12: (39, 98), 13: (26, 22), 14: (18, 24), 15: (44, 47), 16: (80, 52), 17: (26, 51), 18: (59, 71), 19: (35, 48), 20: (20, 83), 21: (81, 15), 22: (23, 0), 23: (77, 50), 24: (18, 99), 25: (72, 20), 26: (24, 21), 27: (3, 85), 28: (30, 57), 29: (81, 49), 30: (16, 79), 31: (70, 96), 32: (6, 77), 33: (31, 91), 34: (79, 99), 35: (64, 91), 36: (37, 88), 37: (75, 43), 38: (67, 87), 39: (43, 69), 40: (46, 61), 41: (51, 97), 42: (7, 12), 43: (38, 83), 44: (55, 32), 45: (30, 90), 46: (91, 55), 47: (98, 65), 48: (63, 74), 49: (32, 18), 50: (7, 86), 51: (74, 41), 52: (21, 6), 53: (96, 35), 54: (90, 89), 55: (15, 91), 56: (6, 100), 57: (76, 28), 58: (39, 67), 59: (79, 27), 60: (83, 95), 61: (93, 72), 62: (45, 42), 63: (58, 1), 64: (88, 14), 65: (60, 24), 66: (67, 15), 67: (92, 76), 68: (26, 5), 69: (49, 92), 70: (13, 51), 71: (86, 91), 72: (19, 79), 73: (84, 82), 74: (61, 69), 75: (4, 89), 76: (56, 20), 77: (6, 60), 78: (96, 6), 79: (25, 31), 80: (20, 12), 81: (4, 17), 82: (27, 82), 83: (11, 15), 84: (32, 8), 85: (88, 93), 86: (51, 4), 87: (69, 54), 88: (60, 57), 89: (43, 89), 90: (58, 67), 91: (24, 77), 92: (74, 32), 93: (53, 18), 94: (26, 52), 95: (9, 76), 96: (34, 51), 97: (33, 90), 98: (12, 24), 99: (29, 6)}
+
+
+
+# Conclusion
+
+On voit très bien que si on rajoute de plus en plus de fourmis et d'itération, nous améliorons le chemin:
+    1920 -> 930 soit une diff de 1 km 
+"""
