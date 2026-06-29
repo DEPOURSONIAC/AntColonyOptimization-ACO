@@ -71,7 +71,7 @@ def distanceEuclidienne (villeA: tuple, villeB: tuple)-> float:
 
     return  float((np.sqrt((deltaX**2 + deltaY**2))))
 
-def matriceDistanceEuclidienne(villes: dict, nombreVilles: int = 100) -> np.ndarray:
+def matriceDistanceEuclidienne(villes: dict) -> np.ndarray:
     """
     matriceDistanceEuclidienne():
 
@@ -89,6 +89,8 @@ def matriceDistanceEuclidienne(villes: dict, nombreVilles: int = 100) -> np.ndar
         - matrice numpy (np.ndarray) des distances
             (de toutes les villes”)
     """
+
+    nombreVilles: int = len(villes)
 
     matriceDistance: np.ndarray = np.zeros((nombreVilles, nombreVilles))
 
@@ -119,7 +121,7 @@ if __name__ == "__main__":
     # Saisie du user du nombre de villes
     nombreVilles = int(input("Saisir le nombre de villes: "))
 
-    # Créa des 5 villes
+    # Créa des 5 villes( pour le test)
     villes = creationDesVilles(nombreVilles)
     print("\nVilles générées :")
     print(villes)
@@ -132,7 +134,7 @@ if __name__ == "__main__":
 
     # matriceDistance
     print("\nMatrice des distances :")
-    matriceDistance = matriceDistanceEuclidienne(villes, nombreVilles)
+    matriceDistance = matriceDistanceEuclidienne(villes)
     print(matriceDistance)
 
     # Vérif diagonale
