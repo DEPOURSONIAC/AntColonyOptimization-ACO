@@ -142,5 +142,5 @@ Des fourmis explorent un chemin( plusisurs villes).
 
 Elles laissent des traces.
 Les bonnes solutions sont renforcées.
-Le système finit par trouver un bon chemin sans être programméS pour ça.
+Le système finit par trouver un bon chemin sans être programmé pour ça.
 
