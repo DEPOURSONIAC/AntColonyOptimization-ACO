@@ -4,7 +4,7 @@
 Le projet **Ant Colony Optimization (ACO)** est une simulation du comportement des fourmis.
 
 Le but est de résoudre des problèmes d’optimisation (comme trouver le chemin le plus court entre plusieurs villes ou le meilleur chemin pour envoyer des paquets IP avec RIP/ OSPF (Réseaux)) en imitant la nature :
-les fourmis déposent des **phéromones virtuelles** pour guider les autres.
+les fourmis déposent des phéromones pour guider les autres.
 
 ---
 
@@ -18,7 +18,7 @@ Voici le fonctionnement :
 - Les bons chemins sont renforcés
 - Les mauvais chemins disparaissent avec le temps (car il y a moins de phéromones)
 
-Le système converge vers une bonne solution.
+Le système converge vers un truc correcte.
 
 ---
 
@@ -27,18 +27,18 @@ a. Création du graphe (villes + distances)
 b. Initialisation des fourmis  
 c. Chaque fourmi construit un chemin  
 d. Calcul de la qualité du chemin  
-e. Mise à jour des phéromones  
+e. MAJ des phéromones  
 f. Répétition sur plusieurs itérations  
 g. Récupération du meilleur chemin  
 
 ---
 
 ## Paramètres mathématiques
-- **α (alpha)** → importance des phéromones (mémoire du système)
-- **β (beta)** → importance de la distance
-- **évaporation** → disparition des phéromones avec le temps
-- **nombre de fourmis** → intensité de l’exploration
-- **nombre d’itérations** → durée de convergence / temps de calcul
+- **α (alpha)** -> importance des phéromones (mémoire du système)
+- **β (beta)** -> importance de la distance
+- **évaporation** -> disparition des phéromones avec le temps
+- **nombre de fourmis** -> intensité de l’exploration
+- **nombre d’itérations** -> durée de convergence / temps de calcul
 
 ---
 
@@ -93,12 +93,13 @@ Permet de stocker et réutiliser les résultats de simulation.
 
 Permet d’interpréter les résultats.
 
-### xxxxxx.py (test/ beta)
+### xxxxx.py (test/ beta)
 -  Utilisation de Pygame
 -  Design améliorer
 -  Visualisation des résultats
 
-Simulation graphique poour rendre ça plus beau.
+Simulation graphique pour rendre ça plus beau.
+
 ---
 
 ### README.md
@@ -122,7 +123,7 @@ Le but est d’expliquer le projet et comment il est structuré.
 
 ## Objectifs
 - Simuler un système intelligent inspiré de la nature
-- Comprendre un algorithme d’optimisation moderne
+- Capter un algorithme d’opti
 - Résoudre un problème complexe ( genre TSP/ voyageur du commerce)
 
 ---
@@ -137,7 +138,7 @@ Le but est d’expliquer le projet et comment il est structuré.
 ---
 
 ## GROSSO MODO
-Des fourmis explorent un chemin(plusisurs villes).
+Des fourmis explorent un chemin( plusisurs villes).
 
 Elles laissent des traces.
 Les bonnes solutions sont renforcées.
