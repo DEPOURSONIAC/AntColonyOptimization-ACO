@@ -52,11 +52,11 @@ g. Récupération du meilleur chemin
 ---
 
 ### moduleAco.py (logique ACO)
-- Calcul des probabilités de choix
+- Calcul des probas sur les chemins
 - Mise à jour des phéromones
 - Construction des chemins
 
-C’est le cerveau de l’algorithme.
+C’est le cerveau/ le coeur de l’algorithme.
 
 ---
 
@@ -93,6 +93,12 @@ Permet de stocker et réutiliser les résultats de simulation.
 
 Permet d’interpréter les résultats.
 
+### xxxxxx.py (test/ beta)
+-  Utilisation de Pygame
+-  Design améliorer
+-  Visualisation des résultats
+
+Simulation graphique poour rendre ça plus beau.
 ---
 
 ### README.md
